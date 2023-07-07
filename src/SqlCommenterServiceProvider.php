@@ -3,6 +3,7 @@
 namespace Spatie\SqlCommenter;
 
 use Illuminate\Database\Connection;
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\SqlCommenter\Commenters\Commenter;
