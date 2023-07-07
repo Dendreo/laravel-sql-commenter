@@ -29,18 +29,23 @@ class SqlCommenterServiceProvider extends PackageServiceProvider
             return new $commenterClass();
         });
 
-        $this->app->get('db.connection')
-            ->beforeExecuting(function (
-                string     &$query,
-                array      &$bindings,
-                Connection $connection,
-            ) {
-                $sqlCommenter = app(SqlCommenter::class);
+        $connections = config('sql-commenter.connections', []);
 
-                $commenters = $this->instanciateCommenters(config('sql-commenter.commenters'));
+        if (empty($connections)) {
+            $connections = [config('database.default')];
+        }
 
-                $query = $sqlCommenter->commentQuery($query, $connection, $commenters);
-            });
+        collect($connections)->each(fn (string $conn) => DB::connection($conn)->beforeExecuting(function (
+            string &$query,
+            array &$bindings,
+            Connection $connection,
+        ) {
+            $sqlCommenter = app(SqlCommenter::class);
+
+            $commenters = $this->instanciateCommenters(config('sql-commenter.commenters'));
+
+            $query = $sqlCommenter->commentQuery($query, $connection, $commenters);
+        }));
     }
 
     /**
