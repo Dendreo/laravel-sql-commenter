@@ -34,9 +34,9 @@ class SqlCommenter
             return $query;
         }
 
-        if (str_contains($query, '/*')) {
+        /*if (str_contains($query, '/*')) {
             return $query;
-        }
+        }*/
 
         $commenters = $this->getCommenters($query, $connection, $commenters);
 
