@@ -28,7 +28,7 @@ class Comment implements Stringable
             ->join(",");
 
         return str($commentsAsString)
-            ->prepend('/*')
+            ->prepend(' /*')
             ->append("*/");
     }
 
@@ -40,6 +40,6 @@ class Comment implements Stringable
 
     public function __toString(): string
     {
-        return urlencode($this->key) . "=" . "'" . urlencode($this->value) . "'";
+        return urlencode($this->key) . "=" . "'" . str_replace(["'", "*", "=", ","], '', $this->value) . "'";
     }
 }
