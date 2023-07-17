@@ -42,6 +42,12 @@ class SqlCommenterServiceProvider extends PackageServiceProvider
             array &$bindings,
             Connection $connection,
         ) {
+
+            if ($connection->getDatabaseName() != config('database.connections.' . $connection->getName() . '.database')) {
+                $connection->setDatabaseName(config('database.connections.of.database'));
+                $connection->reconnect();
+            }
+
             $sqlCommenter = app(SqlCommenter::class);
 
             $commenters = $this->instanciateCommenters(config('sql-commenter.commenters'));
