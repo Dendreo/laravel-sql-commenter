@@ -20,7 +20,7 @@ class SqlCommenterServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->app->singleton(SqlCommenter::class, function () {
+        $this->app->scoped(SqlCommenter::class, function () {
             $commenterClass = config('sql-commenter.commenter_class');
 
             if (! is_a($commenterClass, SqlCommenter::class, true)) {
@@ -29,6 +29,7 @@ class SqlCommenterServiceProvider extends PackageServiceProvider
 
             return new $commenterClass();
         });
+
 
         $connections = config('sql-commenter.connections', []);
 
@@ -41,12 +42,6 @@ class SqlCommenterServiceProvider extends PackageServiceProvider
             array &$bindings,
             Connection $connection,
         ) {
-
-            if ($connection->getDatabaseName() != config('database.connections.' . $connection->getName() . '.database')) {
-                $connection->setDatabaseName(config('database.connections.' . $connection->getName() . '.database'));
-                $connection->reconnect();
-            }
-
             $sqlCommenter = app(SqlCommenter::class);
 
             $commenters = $this->instanciateCommenters(config('sql-commenter.commenters'));
@@ -56,7 +51,7 @@ class SqlCommenterServiceProvider extends PackageServiceProvider
     }
 
     /**
-     * @param array<class-string<Commenter> $commenterClasses
+     * @param array<class-string<Commenter>> $commenterClasses
      *
      * @return array<Commenter>
      */
